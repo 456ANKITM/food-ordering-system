@@ -138,7 +138,7 @@ const ProfileSidebar = ({ open, setOpen, user }) => {
           </div>
 
           {/* Menu */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+          <div className="flex-1  px-4 py-4 space-y-1">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest px-2 mb-3">
               Navigation
             </p>
