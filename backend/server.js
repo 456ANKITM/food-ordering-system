@@ -34,7 +34,10 @@ app.use(
   cors({
     origin: [
       "https://food-ordering-system-iota-opal.vercel.app",
-       "https://food-ordering-system-q2zd.vercel.app"],
+       "https://food-ordering-system-q2zd.vercel.app",
+       "http://localhost:5173", 
+       "http://localhost:5174"
+      ],
     credentials: true,
   }),
 );

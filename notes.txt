@@ -1,5 +1,1 @@
-https://food-ordering-system-9zv1.onrender.com
-
-https://food-ordering-system-q2zd.vercel.app
-https://food-ordering-system-iota-opal.vercel.app
-
+Bug 1: We Can not log in to our application in production 
