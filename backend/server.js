@@ -38,7 +38,9 @@ app.use(
     credentials: true,
   }),
 );
-// Routes
+app.get("/", (req, res)=>{
+  res.send("The Backend is Up..")
+})
 app.use("/api/auth", authRoutes);
 app.use("/api/resturant", resturantRoutes);
 app.use("/api/food", foodRoutes);
