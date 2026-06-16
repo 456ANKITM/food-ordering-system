@@ -53,21 +53,32 @@ const StripeCheckout = ({ clientSecret, onSuccess }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [processing, setProcessing] = useState(false);
   const handlePay = async () => {
-    if (!stripe || !elements) return;
-    setProcessing(true);
+  if (!stripe || !elements) return;
+
+  setProcessing(true);
+
+  try {
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url:`${window.location.origin}/payment-resultses`,
+        return_url: `${window.location.origin}/payment-result`,
       },
+      redirect: "if_required", // ✅ Add this
     });
+
     setProcessing(false);
+
     if (result.error) {
       setErrorMsg(result.error.message);
-    } else {
+    } else if (result.paymentIntent?.status === "succeeded") {
+      // Handle success immediately
       onSuccess();
     }
-  };
+  } catch (err) {
+    setProcessing(false);
+    setErrorMsg("Payment failed. Please try again.");
+  }
+};
 
   return (
     <div className="space-y-5">
