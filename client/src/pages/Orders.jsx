@@ -58,7 +58,7 @@ const StripeCheckout = ({ clientSecret, onSuccess }) => {
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${import.meta.env.VITE_APP_URL}/payment-result`,
+        return_url:`${window.location.origin}/payment-result`,
       },
     });
     setProcessing(false);
