@@ -50,6 +50,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+       <Route path="*" element={<Navigate to="/" />} />
       <Route path="/menu" element={<Menu />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
@@ -104,11 +105,11 @@ const App = () => {
              <PaymentResult />
         </ProtectedRoute>
        } />
-       
+
       <Route path="/search/:query" element={<SearchList />} />
       <Route path="/food/:id" element={<FoodDetails />} />
       
-      <Route path="*" element={<Navigate to="/" />} />
+     
       <Route
         path="/order/:orderId"
         element={
