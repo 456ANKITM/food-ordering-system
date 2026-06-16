@@ -7,6 +7,7 @@ import { notificationApi } from "./api/notificationApi";
 import { paymentApi } from "./api/paymentApi";
 import { userApi } from "./api/userApi";
 import userReducer from "./slices/userSlice";
+import { authPersistMiddleware } from "./middleware/authPersist";
 
 export const store = configureStore({
   reducer: {
@@ -22,7 +23,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(foodApi.middleware)
-      .concat(authApi.middleware)
+      .concat(authApi.middleware, authPersistMiddleware)
       .concat(cartApi.middleware)
       .concat(orderApi.middleware)
       .concat(notificationApi.middleware)

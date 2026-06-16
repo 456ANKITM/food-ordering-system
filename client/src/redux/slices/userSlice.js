@@ -1,9 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  user: null,
-  isAuthenticated: false,
+// ✅ Hydrate from localStorage on app load
+const getInitialState = () => {
+  const persisted = localStorage.getItem("persisted_user");
+  const isAuth = localStorage.getItem("persisted_auth");
+  
+  if (persisted && isAuth) {
+    return {
+      user: JSON.parse(persisted),
+      isAuthenticated: true,
+    };
+  }
+  
+  return {
+    user: null,
+    isAuthenticated: false,
+  };
 };
+
+const initialState = getInitialState();
 
 const userSlice = createSlice({
   name: "user",
@@ -27,5 +42,4 @@ const userSlice = createSlice({
 });
 
 export const { setUser, logoutUser, updateUser } = userSlice.actions;
-
 export default userSlice.reducer;
