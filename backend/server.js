@@ -32,7 +32,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [
+      "https://food-ordering-system-iota-opal.vercel.app",
+       "https://food-ordering-system-q2zd.vercel.app"],
     credentials: true,
   }),
 );
