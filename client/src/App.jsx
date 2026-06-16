@@ -88,6 +88,8 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
+
       <Route
         path="/all-orders"
         element={
@@ -96,9 +98,16 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
+      <Route path="/payment-result" element={
+        <ProtectedRoute> 
+             <PaymentResult />
+        </ProtectedRoute>
+       } />
+       
       <Route path="/search/:query" element={<SearchList />} />
       <Route path="/food/:id" element={<FoodDetails />} />
-      <Route path="/payment-result" element={<PaymentResult />} />
+      
       <Route path="*" element={<Navigate to="/" />} />
       <Route
         path="/order/:orderId"
