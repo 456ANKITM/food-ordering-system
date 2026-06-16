@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import FoodDetails from "./pages/FoodDetails";
@@ -99,6 +99,7 @@ const App = () => {
       <Route path="/search/:query" element={<SearchList />} />
       <Route path="/food/:id" element={<FoodDetails />} />
       <Route path="/payment-result" element={<PaymentResult />} />
+      <Route path="*" element={<Navigate to="/" />} />
       <Route
         path="/order/:orderId"
         element={
