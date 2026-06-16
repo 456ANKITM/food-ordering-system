@@ -7,7 +7,6 @@ import { notificationApi } from "./api/notificationApi";
 import { paymentApi } from "./api/paymentApi";
 import { userApi } from "./api/userApi";
 import userReducer from "./slices/userSlice";
-import { authPersistMiddleware } from "./middleware/authPersist";
 
 export const store = configureStore({
   reducer: {
@@ -21,9 +20,15 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types for serialization checks
+        ignoredActions: ["user/setUser"],
+        ignoredPaths: ["user.user"],
+      },
+    })
       .concat(foodApi.middleware)
-      .concat(authApi.middleware, authPersistMiddleware)
+      .concat(authApi.middleware)
       .concat(cartApi.middleware)
       .concat(orderApi.middleware)
       .concat(notificationApi.middleware)

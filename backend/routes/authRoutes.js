@@ -2,6 +2,7 @@ import express from "express";
 import {
   getMe,
   login,
+  loginAdmin,
   logout,
   registerAdmin,
   registerUser,
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post("/registerUser", registerUser);
 router.post("/registerAdmin", registerAdmin);
 router.post("/login", login);
+router.post("/admin-login", loginAdmin)
 router.get("/me", protect, getMe);
 router.post("/logout", protect, logout);
 

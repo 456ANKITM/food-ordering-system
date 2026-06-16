@@ -1,47 +1,59 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../baseQuery";
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_BACKEND_URL}/api/auth`,
-    credentials: "include",
-  }),
-  tagTypes: ["User"],
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    registerUser: builder.mutation({
-      query: (userData) => ({
-        url: "/registerUser",
-        method: "POST",
-        body: userData,
-      }),
-      invalidatesTags: ["User"],
-    }),
+    // ✅ Login endpoint
     loginUser: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: credentials,
+      }),
+      transformResponse: (response) => {
+        // ✅ Ensure token is in response
+        return response;
+      },
+    }),
+
+    // ✅ Signup endpoint
+    signupUser: builder.mutation({
       query: (userData) => ({
-        url: "/login",
+        url: "/auth/register",
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: ["User"],
     }),
+
+    // ✅ Get current user (verify token is valid)
     getUser: builder.query({
       query: () => ({
-        url: "/me",
+        url: "/auth/me",
+        method: "GET",
       }),
-      providesTags: ["User"],
+      transformResponse: (response) => {
+        return response;
+      },
     }),
+
+    // ✅ Logout endpoint
     logout: builder.mutation({
       query: () => ({
-        url: "/logout",
+        url: "/auth/logout",
         method: "POST",
       }),
+      transformResponse: (response) => {
+        return response;
+      },
     }),
   }),
 });
 
 export const {
-  useRegisterUserMutation,
   useLoginUserMutation,
+  useSignupUserMutation,
   useGetUserQuery,
   useLogoutMutation,
 } = authApi;

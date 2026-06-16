@@ -3,12 +3,15 @@ import Footer from "../components/Footer";
 import PublicNavbar from "../components/PublicNavbar";
 import { useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../redux/api/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/userSlice";
 
 import SuccessToast from "../components/SuccessToast";
 import ErrorToast from "../components/ErrorToast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
@@ -48,8 +51,13 @@ const Login = () => {
         setSuccessMsg(res.message || "Login successful!");
         setShowSuccess(true);
 
-        // optional: store user locally (for UI state)
-        localStorage.setItem("user", JSON.stringify(res.user));
+        // ✅ Dispatch to Redux with both user and token
+        dispatch(
+          setUser({
+            user: res.user,
+            token: res.token || "", // Token from backend response
+          })
+        );
 
         setTimeout(() => {
           navigate("/");
@@ -123,7 +131,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl shadow-md transition"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>
@@ -131,10 +139,10 @@ const Login = () => {
 
           {/* Signup Link */}
           <p className="text-center text-sm text-gray-500 mt-5">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <span
               onClick={() => navigate("/signup")}
-              className="text-orange-500 cursor-pointer font-medium"
+              className="text-orange-500 cursor-pointer font-medium hover:text-orange-600"
             >
               Sign Up
             </span>

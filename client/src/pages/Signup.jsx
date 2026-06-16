@@ -2,14 +2,14 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import PublicNavbar from "../components/PublicNavbar";
 import { useNavigate } from "react-router-dom";
-import { useRegisterUserMutation } from "../redux/api/authApi";
+import { useSignupUserMutation } from "../redux/api/authApi";
 
 import SuccessToast from "../components/SuccessToast";
 import ErrorToast from "../components/ErrorToast";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [signupUser, { isLoading }]= useSignupUserMutation();
 
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -40,7 +40,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await registerUser({
+      const res = await signupUser({
         name: form.name,
         email: form.email,
         password: form.password,
