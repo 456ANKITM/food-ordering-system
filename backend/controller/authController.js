@@ -86,7 +86,7 @@ export const registerAdmin = async (req, res) => {
   }
 };
 
-// ✅ FIXED: login with token in response and cookie
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -113,7 +113,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ Only allow customers to login via this endpoint
+    
     if (user.role !== "customer") {
       return res.status(403).json({
         success: false,
@@ -123,7 +123,7 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // ✅ Set httpOnly cookie
+    
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -131,7 +131,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    // ✅ Return token in response as well
+    
     return res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -180,7 +180,7 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    // ✅ Only allow customers to login via this endpoint
+    
     if (user.role !== "admin") {
       return res.status(403).json({
         success: false,
@@ -190,7 +190,7 @@ export const loginAdmin = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // ✅ Set httpOnly cookie
+  
       res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -198,7 +198,7 @@ export const loginAdmin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    // ✅ Return token in response as well
+    
     return res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -221,7 +221,7 @@ export const loginAdmin = async (req, res) => {
   }
 };
 
-// ✅ FIXED: getMe with proper validation
+
 export const getMe = async (req, res) => {
   try {
     if (!req.user) {
@@ -250,7 +250,7 @@ export const getMe = async (req, res) => {
   }
 };
 
-// ✅ FIXED: logout
+
 export const logout = async (req, res) => {
   try {
     res.clearCookie("token", {

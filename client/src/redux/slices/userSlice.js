@@ -23,9 +23,9 @@ const userSlice = createSlice({
       state.authChecked = true;
     },
 
-    setAuthChecked: (state) => {
-      state.authChecked = true;
-    },
+   setAuthChecked: (state, action) => {
+  state.authChecked = action.payload;
+}
   },
 });
 

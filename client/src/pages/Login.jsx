@@ -9,6 +9,8 @@ import { setUser } from "../redux/slices/userSlice";
 import SuccessToast from "../components/SuccessToast";
 import ErrorToast from "../components/ErrorToast";
 
+import { Clock, TrendingUp, Utensils, CheckCircle, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,6 +26,9 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -41,6 +46,12 @@ const Login = () => {
       return;
     }
 
+    if (!form.email.includes("@")) {
+      setErrorMsg("Please enter a valid email address");
+      setShowError(true);
+      return;
+    }
+
     try {
       const res = await loginUser({
         email: form.email,
@@ -48,20 +59,25 @@ const Login = () => {
       }).unwrap();
 
       if (res.success) {
-        setSuccessMsg(res.message || "Login successful!");
+        setSuccessMsg(res.message || "Welcome back! Redirecting...");
         setShowSuccess(true);
 
         dispatch(setUser(res.user));
 
+        // Store remember me preference
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", form.email);
+        }
+
         setTimeout(() => {
           navigate("/");
-        }, 1200);
+        }, 1500);
       } else {
         setErrorMsg(res.message || "Login failed");
         setShowError(true);
       }
     } catch (error) {
-      setErrorMsg(error?.data?.message || "Invalid credentials");
+      setErrorMsg(error?.data?.message || "Invalid email or password");
       setShowError(true);
     }
   };
@@ -82,65 +98,256 @@ const Login = () => {
         <ErrorToast message={errorMsg} onClose={() => setShowError(false)} />
       )}
 
-      <div className="min-h-screen bg-linear-to-r from-orange-50 via-white to-orange-100 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-orange-100">
-          {/* Heading */}
-          <h2 className="text-3xl font-bold text-gray-900 text-center">
-            Welcome <span className="text-orange-500">Back</span>
-          </h2>
+      <div className="min-h-screen bg-linear-to-b from-white via-orange-50 to-white flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-6xl">
+          
+          {/* Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-center">
 
-          <p className="text-gray-500 text-sm text-center mt-2">
-            Login to continue ordering your favorite meals 🍽️
-          </p>
+            {/* LEFT SECTION - HERO BENEFITS */}
+            <div className="hidden lg:flex flex-col justify-center px-12 py-16 relative order-last">
+              {/* Decorative accents */}
+              <div className="absolute top-0 left-0 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-40 -z-10"></div>
+              <div className="absolute bottom-0 right-0 w-40 h-40 bg-red-200 rounded-full blur-3xl opacity-40 -z-10"></div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            {/* Email */}
-            <div>
-              <label className="text-sm text-gray-600">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full mt-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
+              {/* Main heading */}
+              <div className="mb-4">
+                <span className="inline-block text-orange-600 font-semibold text-sm tracking-wider uppercase mb-4">
+                  Welcome Back
+                </span>
+                <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                  Your meals await ⏱️
+                </h1>
+                <p className="text-lg text-gray-600 leading-relaxed mb-2">
+                  Log in to continue your FoodHub journey and get back to your favorite restaurants instantly.
+                </p>
+              </div>
+
+              {/* Benefit cards */}
+              <div className="mt-12 space-y-5">
+                
+                <div className="flex gap-4">
+                  <div className="shrink-0">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-linear-to-br from-orange-500 to-red-500 text-white">
+                      <Utensils className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">Saved Preferences</h3>
+                    <p className="text-sm text-gray-600 mt-1">Your favorite restaurants and orders saved just for you</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="shrink-0">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-linear-to-br from-orange-500 to-red-500 text-white">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">Order History</h3>
+                    <p className="text-sm text-gray-600 mt-1">Reorder your favorites with just one click</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="shrink-0">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-linear-to-br from-orange-500 to-red-500 text-white">
+                      <TrendingUp className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">Exclusive Rewards</h3>
+                    <p className="text-sm text-gray-600 mt-1">Earn points on every order and unlock special deals</p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Stats section */}
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-gray-900">100% Secure & Private</span>
+                </div>
+                <p className="text-sm text-gray-600 italic">
+                  Your data is encrypted and safe with industry-leading security.
+                </p>
+              </div>
+
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="text-sm text-gray-600">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="w-full mt-1 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
-              />
+            {/* RIGHT SECTION - LOGIN FORM */}
+            <div className="flex items-center justify-center lg:px-12">
+              <div className="w-full max-w-md">
+
+                {/* Form Header */}
+                <div className="mb-10">
+                  <h2 className="text-4xl font-bold text-gray-900 mb-3">
+                    Welcome back
+                  </h2>
+                  <p className="text-gray-600">
+                    Log in to your account to continue ordering
+                  </p>
+                </div>
+
+                {/* Google Login Button */}
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3 mb-6 border-2 border-gray-200 rounded-xl font-medium text-gray-700 hover:border-orange-500 hover:bg-orange-50 transition-all duration-300 group"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                    <path
+                      fill="currentColor"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    />
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+
+                {/* Divider */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                  <span className="text-sm text-gray-500 font-medium">Or login with email</span>
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                </div>
+
+                {/* Login Form */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+
+                  {/* Email Input */}
+                  <div className="relative">
+                    <div className={`flex items-center gap-3 px-4 py-3 border-2 rounded-xl transition-all duration-300 ${
+                      focusedField === 'email' 
+                        ? 'border-orange-500 bg-orange-50' 
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}>
+                      <Mail className="h-5 w-5 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        onFocus={() => setFocusedField('email')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Email Address"
+                        className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password Input */}
+                  <div className="relative">
+                    <div className={`flex items-center gap-3 px-4 py-3 border-2 rounded-xl transition-all duration-300 ${
+                      focusedField === 'password' 
+                        ? 'border-orange-500 bg-orange-50' 
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}>
+                      <Lock className="h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        onFocus={() => setFocusedField('password')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Password"
+                        className="w-full bg-transparent outline-none text-gray-900 placeholder-gray-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Remember Me & Forgot Password */}
+                  <div className="flex items-center justify-between pt-2">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                      />
+                      <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                        Remember me
+                      </span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => navigate("/forgot-password")}
+                      className="text-sm text-orange-600 font-medium hover:text-orange-700 transition-colors"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-6"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Logging in...
+                      </>
+                    ) : (
+                      <>
+                        Login to Account
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+
+                </form>
+
+                {/* Signup Link */}
+                <p className="text-center text-gray-600 mt-8 text-sm">
+                  Don't have an account?{" "}
+                  <span
+                    onClick={() => navigate("/signup")}
+                    className="text-orange-600 font-semibold cursor-pointer hover:text-orange-700 transition-colors"
+                  >
+                    Create one now
+                  </span>
+                </p>
+
+                {/* Additional Help */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 text-center">
+                    Need help?{" "}
+                    <span className="text-orange-600 font-medium cursor-pointer hover:underline">
+                      Contact Support
+                    </span>
+                  </p>
+                </div>
+
+              </div>
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          {/* Signup Link */}
-          <p className="text-center text-sm text-gray-500 mt-5">
-            Don't have an account?{" "}
-            <span
-              onClick={() => navigate("/signup")}
-              className="text-orange-500 cursor-pointer font-medium hover:text-orange-600"
-            >
-              Sign Up
-            </span>
-          </p>
+          </div>
         </div>
       </div>
 

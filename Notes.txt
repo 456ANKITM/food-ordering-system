@@ -1,0 +1,9 @@
+Now I am going to level up this application to make it More Production ready so that we can scale it sale it to the clients. 
+
+What do we Want to acheive Now ? 
+
+We are building this app a real production Single Vendor Complete Resturannt Management System. So that Resturant Can Manage the Orders Manage the Menu Manage the Resturant Settings Manage the Users. And Enhance the Complete Workflow their System to Enborad in Lagre Resturants Across Multiple resturants in Nepal and Earn Money through it. 
+
+So we need to work towards to make this app Good looking both visually and functionally 
+
+Task 1: Improve the UI of the Signup and Login Page Add Some Contents and Make this Page look Nice So that Users Can sign up into our application. 

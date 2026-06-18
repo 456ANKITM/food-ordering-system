@@ -4,13 +4,19 @@ import Menu from "./pages/Menu";
 import FoodDetails from "./pages/FoodDetails";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useGetUserQuery } from "./redux/api/authApi";
-import { useEffect, useState } from "react";
-import {  logoutUser, setUser, setAuthChecked } from "./redux/slices/userSlice";
+import { useEffect } from "react";
+
+import { logoutUser, setUser, setAuthChecked } from "./redux/slices/userSlice";
+
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
 import AllOrders from "./pages/AllOrders";
@@ -19,37 +25,57 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import SearchList from "./pages/SearchList";
 import OrderDetails from "./pages/OrderDetails";
-import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentResult from "./pages/PaymentResult";
+
 import { Loader } from "./components/Loader";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const App = () => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError, isSuccess } = useGetUserQuery(undefined, {
+
+  const { user, authChecked } = useSelector((state) => state.user);
+
+  const {
+    data,
+    isLoading,
+    isSuccess,
+    isError,
+  } = useGetUserQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
 
-const {authChecked} = useSelector(state => state.user.authChecked);
+  // =========================
+  // AUTH HYDRATION HANDLER
+  // =========================
+  useEffect(() => {
+    if (isSuccess && data?.success) {
+      dispatch(setUser(data.user));
+      dispatch(setAuthChecked(true));
+    }
 
-useEffect(() => {
-  if (isSuccess && data?.success) {
-    dispatch(setUser(data.user));
-  } else if (isError) {
-    dispatch(logoutUser());
+    if (isError) {
+      dispatch(logoutUser());
+      dispatch(setAuthChecked(true));
+    }
+  }, [isSuccess, isError, data, dispatch]);
+
+  // =========================
+  // SAFE LOADING STATE
+  // =========================
+  const authLoading =
+    isLoading &&
+    !isSuccess &&
+    !isError &&
+    !authChecked;
+
+  if (authLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-white">
+        <Loader />
+      </div>
+    );
   }
-}, [isSuccess, isError, data, dispatch]);
-
-useEffect(() => {
-  // ONLY mark checked when request is finished
-  if (!isLoading) {
-    dispatch(setAuthChecked());
-  }
-}, [isLoading, dispatch]);
-
-  // if (!authChecked) return <Loader />;
-
 
   return (
     <Routes>
@@ -70,6 +96,7 @@ useEffect(() => {
           </PublicOnlyRoute>
         }
       />
+
       <Route
         path="/login"
         element={
@@ -129,7 +156,7 @@ useEffect(() => {
         }
       />
 
-      {/* Catch all - redirect to home */}
+      {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
