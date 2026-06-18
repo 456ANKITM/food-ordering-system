@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -18,29 +18,46 @@ import Menu from "./pages/Menu";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError, isSuccess } = useGetUserQuery(undefined, {
-    refetchOnFocus: false,
-    refetchOnReconnect: false,
-  });
+  const { data, isLoading, isError, isSuccess } =
+    useGetUserQuery(undefined, {
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    });
+
+  const { authChecked } = useSelector((state) => state.user);
+
 
   useEffect(() => {
-    if (isSuccess && data?.success) {
-      if (data.user.role === "admin") {
+    if (isSuccess) {
+      if (data?.success && data.user?.role === "admin") {
         dispatch(setUser(data.user));
       } else {
         dispatch(logoutUser());
       }
+      dispatch(setAuthChecked(true));
     }
+
     if (isError) {
       dispatch(logoutUser());
+      dispatch(setAuthChecked(true));
     }
-    if (!isLoading) {
-      dispatch(setAuthChecked());
-    }
-  }, [data, isError, isSuccess, isLoading, dispatch]);
+  }, [isSuccess, isError, data, dispatch]);
+
+
+  const showLoader =
+    !authChecked && (isLoading || (!isSuccess && !isError));
+
+  if (showLoader) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-white">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <Routes>
+      {/* Public */}
       <Route
         path="/"
         element={
@@ -49,6 +66,8 @@ const App = () => {
           </PublicOnlyRoute>
         }
       />
+
+      {/* Protected */}
       <Route
         path="/dashboard"
         element={
@@ -57,6 +76,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/order/:orderId"
         element={
@@ -65,6 +85,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/menu"
         element={
@@ -73,6 +94,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/add-food"
         element={
@@ -81,6 +103,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/all-orders"
         element={
@@ -89,6 +112,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/all-users"
         element={
@@ -97,6 +121,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/all-payments"
         element={
@@ -105,6 +130,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/user/:id"
         element={

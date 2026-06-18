@@ -7,3 +7,7 @@ We are building this app a real production Single Vendor Complete Resturannt Man
 So we need to work towards to make this app Good looking both visually and functionally 
 
 Task 1: Improve the UI of the Signup and Login Page Add Some Contents and Make this Page look Nice So that Users Can sign up into our application. 
+
+Task 2:- Let's Move to admin Section because admin will buy our app so let's fix the issues 1 by one and make it more authentic and more nice. 
+
+1. Authentication System 
